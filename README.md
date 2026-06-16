@@ -1,6 +1,6 @@
 # Blog Site
 
-A minimal blog built with **Flask**, **Jinja2**, and **SQLite**. Posts are 
+A minimal blog built with **Flask**, **Jinja2**, and **DynamoDB**. Posts are 
 written in Markdown and stored in the database. An admin panel lets you
 create, edit, publish, and delete posts.
 
@@ -9,8 +9,9 @@ create, edit, publish, and delete posts.
 - Public blog: post list and individual post pages with rendered Markdown
 - Admin panel at `/admin/` (session-based login)
 - Live Markdown preview while writing
-- SQLite storage — no external database required
+- DynamoDB storage (AWS in production, local DynamoDB for development)
 - Code syntax highlighting via Pygments
+- Local DynamoDB support via Docker Compose
 
 ## Quick start
 
@@ -22,12 +23,18 @@ source .venv/bin/activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Copy and configure environment variables
+# 3. Start local DynamoDB (Docker Compose)
+COMPOSE_DISABLE_ENV_FILE=1 docker compose up -d
+
+# 4. Copy and configure environment variables
 cp .env.example .env
 #    Edit .env — at minimum set a proper SECRET_KEY.
 #    Default dev credentials: admin / admin
 
-# 4. Run the dev server
+# 5. Initialize the DynamoDB table
+flask init-db
+
+# 6. Run the dev server
 flask run
 ```
 
@@ -50,7 +57,7 @@ blog-site/
 ├── app.py                  # Flask application
 ├── requirements.txt
 ├── .env.example
-├── instance/               # SQLite database (auto-created)
+├── docker-compose.yml      # Local DynamoDB service
 ├── static/
 │   ├── css/
 │   │   ├── style.css
@@ -73,4 +80,7 @@ blog-site/
 
 - Set `SECRET_KEY` to a cryptographically random value (`python -c "import secrets; print(secrets.token_hex(32))"`)
 - Set `ADMIN_PASSWORD_HASH` to a proper hashed password
+- Set `DYNAMODB_TABLE_NAME` to your target table name
+- Remove `DYNAMODB_ENDPOINT_URL` in production so boto3 uses AWS endpoints
+- Use AWS IAM credentials/role with access to the DynamoDB table
 - Run behind a WSGI server (e.g. Gunicorn) with HTTPS
