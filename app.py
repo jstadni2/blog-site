@@ -48,6 +48,17 @@ os.environ.setdefault("AWS_SECRET_ACCESS_KEY", "local")
 # ---------------------------------------------------------------------------
 
 
+def _parse_created_at(created_raw: str | datetime | None) -> datetime:
+    if isinstance(created_raw, datetime):
+        return created_raw
+    if isinstance(created_raw, str):
+        try:
+            return datetime.fromisoformat(created_raw)
+        except ValueError:
+            return datetime.utcnow()
+    return datetime.utcnow()
+
+
 class PostRepository:
     def __init__(self) -> None:
         self._dynamodb = boto3.resource(
@@ -86,13 +97,7 @@ class PostRepository:
             self._table.wait_until_exists()
 
     def _to_template_post(self, item: dict) -> dict:
-        created_raw = item.get("created_at", "")
-        created_val = datetime.utcnow()
-        if isinstance(created_raw, str):
-            try:
-                created_val = datetime.fromisoformat(created_raw)
-            except ValueError:
-                created_val = datetime.utcnow()
+        created_val = _parse_created_at(item.get("created_at"))
         return {
             "id": item["id"],
             "title": item["title"],
