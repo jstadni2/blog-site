@@ -1,6 +1,8 @@
 # Blog Site
 
-A minimal blog built with **Flask**, **Jinja2**, and **SQLite**. Posts are written in Markdown and stored in the database. An admin panel lets you create, edit, publish, and delete posts.
+A minimal blog built with **Flask**, **Jinja2**, and **SQLite**. Posts are 
+written in Markdown and stored in the database. An admin panel lets you
+create, edit, publish, and delete posts.
 
 ## Features
 
