@@ -5,3 +5,9 @@ __pycache__
 .pytest_cache
 test-results
 playwright-report
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/crash.log

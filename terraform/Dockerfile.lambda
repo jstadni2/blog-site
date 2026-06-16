@@ -1,0 +1,16 @@
+FROM public.ecr.aws/docker/library/python:3.12-slim
+
+# Lambda Web Adapter extension
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter
+
+WORKDIR /var/task
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
+
+COPY src ./src
+
+EXPOSE 8080
+
+# Lambda Web Adapter forwards requests to this local web server.
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "--workers", "1", "--timeout", "60", "src.blogsite:app"]
