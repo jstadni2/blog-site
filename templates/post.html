@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post['title'] }} — My Blog{% endblock %}
+
+{% block content %}
+<article class="post">
+  <header class="post__header">
+    <h1 class="post__title">{{ post['title'] }}</h1>
+    <time class="post__date" datetime="{{ post['created_at'] }}">
+      {{ post['created_at'][:10] }}
+    </time>
+    {% if session.get('logged_in') %}
+      <div class="post__admin-actions">
+        <a href="{{ url_for('admin_edit_post', post_id=post['id']) }}" class="btn btn--sm">Edit</a>
+      </div>
+    {% endif %}
+  </header>
+  <div class="post__body prose">
+    {{ content | safe }}
+  </div>
+</article>
+<a href="{{ url_for('index') }}" class="back-link">&larr; All posts</a>
+{% endblock %}

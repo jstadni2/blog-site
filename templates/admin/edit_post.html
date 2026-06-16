@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Post — Admin{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/editor.css') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+  <h1 class="page-heading">Edit Post</h1>
+  <a href="{{ url_for('admin_dashboard') }}" class="btn">← Dashboard</a>
+</div>
+
+<form method="post" action="{{ url_for('admin_edit_post', post_id=post['id']) }}" class="form post-form">
+  <div class="form__group">
+    <label for="title" class="form__label">Title</label>
+    <input id="title" name="title" type="text" class="form__input" required autofocus
+           value="{{ request.form.get('title', post['title']) }}" />
+  </div>
+
+  <div class="form__group editor-group">
+    <div class="editor-pane">
+      <label for="content" class="form__label">Content <span class="text-muted">(Markdown)</span></label>
+      <textarea id="content" name="content" class="form__textarea editor-textarea" rows="24"
+                required>{{ request.form.get('content', post['content']) }}</textarea>
+    </div>
+    <div class="preview-pane">
+      <label class="form__label">Preview</label>
+      <div id="preview" class="prose preview-output"></div>
+    </div>
+  </div>
+
+  <div class="form__group form__group--inline">
+    <label class="form__checkbox-label">
+      <input type="checkbox" name="published" value="1"
+             {% if request.form.get('published', post['published'] | string) not in ('', '0') %}checked{% endif %} />
+      Published
+    </label>
+  </div>
+
+  <div class="form__actions">
+    <button type="submit" class="btn btn--primary">Save Changes</button>
+    <a href="{{ url_for('post', slug=post['slug']) }}" target="_blank" class="btn">View Post</a>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn">Cancel</a>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+{% endblock %}
