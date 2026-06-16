@@ -30,12 +30,13 @@ COMPOSE_DISABLE_ENV_FILE=1 docker compose up -d
 cp .env.example .env
 #    Edit .env — at minimum set a proper SECRET_KEY.
 #    Default dev credentials: admin / admin
+#    FLASK_APP points to src.blogsite:app by default.
 
 # 5. Initialize the DynamoDB table
-flask init-db
+FLASK_APP=src.blogsite:app flask init-db
 
 # 6. Run the dev server
-flask run
+FLASK_APP=src.blogsite:app flask run
 ```
 
 Open <http://127.0.0.1:5000> in your browser.
@@ -54,26 +55,29 @@ python -c "from werkzeug.security import generate_password_hash; print(generate_
 
 ```
 blog-site/
-├── app.py                  # Flask application
+├── src/
+│   └── blogsite/
+│       ├── app.py          # Flask application
+│       ├── static/
+│       │   ├── css/
+│       │   │   ├── style.css
+│       │   │   └── editor.css
+│       │   └── js/
+│       │       └── editor.js   # Live Markdown preview (uses marked.js CDN)
+│       └── templates/
+│           ├── base.html
+│           ├── index.html
+│           ├── post.html
+│           ├── 404.html
+│           └── admin/
+│               ├── login.html
+│               ├── dashboard.html
+│               ├── new_post.html
+│               └── edit_post.html
 ├── requirements.txt
 ├── .env.example
 ├── docker-compose.yml      # Local DynamoDB service
-├── static/
-│   ├── css/
-│   │   ├── style.css
-│   │   └── editor.css
-│   └── js/
-│       └── editor.js       # Live Markdown preview (uses marked.js CDN)
-└── templates/
-    ├── base.html
-    ├── index.html
-    ├── post.html
-    ├── 404.html
-    └── admin/
-        ├── login.html
-        ├── dashboard.html
-        ├── new_post.html
-        └── edit_post.html
+└── tests/
 ```
 
 ## Production notes

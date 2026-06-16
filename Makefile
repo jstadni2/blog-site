@@ -15,7 +15,7 @@ E2E_AWS_SECRET_ACCESS_KEY := local
 # Start the app with deterministic credentials used by the E2E suite.
 e2e-server:
 	FLASK_SKIP_DOTENV=1 \
-	FLASK_APP=app.py \
+	FLASK_APP=src.blogsite:app \
 	SECRET_KEY=e2e-secret-key \
 	DYNAMODB_AUTO_INIT=1 \
 	ADMIN_USERNAME=$(E2E_ADMIN_USERNAME) \
