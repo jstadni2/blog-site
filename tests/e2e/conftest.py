@@ -11,6 +11,7 @@ DEFAULT_E2E_ADMIN_PASSWORD = "e2e_password_123"
 os.environ.setdefault("E2E_BASE_URL", DEFAULT_E2E_BASE_URL)
 os.environ.setdefault("E2E_ADMIN_USERNAME", DEFAULT_E2E_ADMIN_USERNAME)
 os.environ.setdefault("E2E_ADMIN_PASSWORD", DEFAULT_E2E_ADMIN_PASSWORD)
+os.environ["DYNAMODB_AUTO_INIT"] = "1"
 
 
 @pytest.fixture(scope="session")

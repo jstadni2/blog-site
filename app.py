@@ -200,7 +200,8 @@ def init_db_command() -> None:
 
 @app.before_request
 def ensure_db() -> None:
-    init_db()
+    if os.environ.get("DYNAMODB_AUTO_INIT"):
+        init_db()
 
 
 # ---------------------------------------------------------------------------
