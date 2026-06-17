@@ -169,7 +169,6 @@ resource "aws_lambda_function" "app" {
       ADMIN_USERNAME      = var.admin_username
       ADMIN_PASSWORD_HASH = var.admin_password_hash
       DYNAMODB_TABLE_NAME = aws_dynamodb_table.posts.name
-      AWS_DEFAULT_REGION  = data.aws_region.current.name
     }
   }
 
