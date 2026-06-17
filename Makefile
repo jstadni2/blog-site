@@ -56,3 +56,6 @@ e2e-test:
 		exit 1; \
 	fi; \
 	E2E_BASE_URL=$(E2E_BASE_URL) E2E_ADMIN_USERNAME=$(E2E_ADMIN_USERNAME) E2E_ADMIN_PASSWORD=$(E2E_ADMIN_PASSWORD) $(PYTHON) -m pytest -q tests/e2e
+
+deploy:
+	TF_VAR_name_prefix=$$(whoami) terraform -chdir=terraform apply -var-file=sandbox.tfvars
