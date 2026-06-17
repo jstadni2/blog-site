@@ -25,7 +25,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 # ---------------------------------------------------------------------------
 
 app = Flask(__name__, instance_relative_config=True)
-app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-in-production")
+app.secret_key = os.environ.get("SECRET_KEY")
 app.permanent_session_lifetime = timedelta(hours=8)
 
 # Admin credentials — set via environment variables in production.
