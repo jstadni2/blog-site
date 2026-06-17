@@ -10,7 +10,10 @@ E2E_AWS_DEFAULT_REGION := us-east-2
 E2E_AWS_ACCESS_KEY_ID := local
 E2E_AWS_SECRET_ACCESS_KEY := local
 
-.PHONY: e2e-server e2e-test
+.PHONY: db e2e-server e2e-test deploy
+
+db:
+	docker compose up
 
 # Start the app with deterministic credentials used by the E2E suite.
 e2e-server:
