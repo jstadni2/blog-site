@@ -37,7 +37,7 @@ ADMIN_PASSWORD_HASH: str = _raw_hash if _raw_hash else generate_password_hash("a
 # DynamoDB configuration
 DYNAMODB_TABLE_NAME = os.environ.get("DYNAMODB_TABLE_NAME", "blog_posts")
 DYNAMODB_ENDPOINT_URL = os.environ.get("DYNAMODB_ENDPOINT_URL")
-DYNAMODB_REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
+DYNAMODB_REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-2")
 
 # Helpful defaults for local DynamoDB usage only.
 if DYNAMODB_ENDPOINT_URL:
