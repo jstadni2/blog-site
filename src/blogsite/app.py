@@ -96,6 +96,7 @@ class PostRepository:
             "title": item["title"],
             "slug": item["slug"],
             "content": item.get("content", ""),
+            "rendered_content": item.get("rendered_content", ""),
             "published": int(item.get("published", 0)),
             "created_at": created_val,
             "updated_at": item.get("updated_at"),
@@ -136,7 +137,14 @@ class PostRepository:
                 return True
         return False
 
-    def create_post(self, title: str, slug: str, content: str, published: int) -> str:
+    def create_post(
+        self,
+        title: str,
+        slug: str,
+        content: str,
+        rendered_content: str,
+        published: int,
+    ) -> str:
         post_id = str(uuid.uuid4())
         now_str = datetime.utcnow().isoformat()
         self._table.put_item(
@@ -145,6 +153,7 @@ class PostRepository:
                 "title": title,
                 "slug": slug,
                 "content": content,
+                "rendered_content": rendered_content,
                 "published": int(published),
                 "created_at": now_str,
                 "updated_at": now_str,
@@ -152,17 +161,26 @@ class PostRepository:
         )
         return post_id
 
-    def update_post(self, post_id: str, title: str, content: str, published: int) -> None:
+    def update_post(
+        self,
+        post_id: str,
+        title: str,
+        content: str,
+        rendered_content: str,
+        published: int,
+    ) -> None:
         now_str = datetime.utcnow().isoformat()
         self._table.update_item(
             Key={"id": post_id},
             UpdateExpression=(
                 "SET title = :title, content = :content, "
+                "rendered_content = :rendered_content, "
                 "published = :published, updated_at = :updated_at"
             ),
             ExpressionAttributeValues={
                 ":title": title,
                 ":content": content,
+                ":rendered_content": rendered_content,
                 ":published": int(published),
                 ":updated_at": now_str,
             },
@@ -217,10 +235,11 @@ def login_required(f):  # type: ignore[type-arg]
 # ---------------------------------------------------------------------------
 
 
+# Server-side markdown rendering may be slowing down page loads
 def render_markdown(content: str) -> str:
     return md.markdown(
         content,
-        extensions=["fenced_code", "tables", "toc", "codehilite", "nl2br"],
+        extensions=["fenced_code", "tables", "toc", "nl2br"],
     )
 
 
@@ -240,7 +259,7 @@ def post(slug: str):
     row = repo.get_post_by_slug(slug, published_only=True)
     if row is None:
         abort(404)
-    html_content = render_markdown(row.get("content", ""))
+    html_content = row.get("rendered_content") or render_markdown(row.get("content", ""))
     return render_template("post.html", post=row, content=html_content)
 
 
@@ -300,7 +319,8 @@ def admin_new_post():
                 slug = f"{base_slug}-{i}"
                 i += 1
 
-            repo.create_post(title, slug, content, published)
+            rendered_content = render_markdown(content)
+            repo.create_post(title, slug, content, rendered_content, published)
             flash("Post created successfully.", "success")
             return redirect(url_for("admin_dashboard"))
 
@@ -322,7 +342,8 @@ def admin_edit_post(post_id: str):
         if not title or not content:
             flash("Title and content are required.", "error")
         else:
-            repo.update_post(post_id, title, content, published)
+            rendered_content = render_markdown(content)
+            repo.update_post(post_id, title, content, rendered_content, published)
             flash("Post updated successfully.", "success")
             return redirect(url_for("admin_dashboard"))
 
