@@ -23,7 +23,7 @@
       {% for post in posts %}
         <tr>
           <td>
-            <a href="{{ url_for('post', slug=post['slug']) }}" target="_blank">
+            <a href="{{ url_for('post', slug=post['slug']) }}">
               {{ post['title'] }}
             </a>
           </td>
