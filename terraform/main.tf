@@ -153,6 +153,54 @@ resource "aws_cloudwatch_log_group" "lambda" {
   })
 }
 
+resource "aws_ssm_parameter" "secret_key" {
+  name = "/${local.full_function_name}/secret_key"
+  description = ""
+  type = "SecureString"
+  value = var.secret_key  # supplied via -var or secrets manager at apply time
+
+  lifecycle {
+    ignore_changes = [ value ]  # prevent Terraform from overwriting manual rotations
+  }
+}
+
+data "aws_ssm_parameter" "secret_key_live" {
+    name = aws_ssm_parameter.secret_key.name
+    with_decryption = true
+}
+
+resource "aws_ssm_parameter" "admin_username" {
+  name = "/${local.full_function_name}/admin_username"
+  description = ""
+  type = "SecureString"
+  value = var.admin_username  # supplied via -var or secrets manager at apply time
+
+  lifecycle {
+    ignore_changes = [ value ]  # prevent Terraform from overwriting manual rotations
+  }
+}
+
+data "aws_ssm_parameter" "admin_username_live" {
+    name = aws_ssm_parameter.admin_username.name
+    with_decryption = true
+}
+
+resource "aws_ssm_parameter" "admin_password_hash" {
+  name = "/${local.full_function_name}/admin_password_hash"
+  description = ""
+  type = "SecureString"
+  value = var.admin_password_hash  # supplied via -var or secrets manager at apply time
+
+  lifecycle {
+    ignore_changes = [ value ]  # prevent Terraform from overwriting manual rotations
+  }
+}
+
+data "aws_ssm_parameter" "admin_password_hash_live" {
+    name = aws_ssm_parameter.admin_password_hash.name
+    with_decryption = true
+}
+
 resource "aws_lambda_function" "app" {
   function_name = local.full_function_name
   role          = aws_iam_role.lambda_exec.arn
@@ -163,11 +211,13 @@ resource "aws_lambda_function" "app" {
 
   architectures = ["x86_64"]
 
+  # Lambda automatically sets AWS_DEFAULT_REGION & AWS_REGION
+  # based on the function's deployment region
   environment {
     variables = {
-      SECRET_KEY          = var.secret_key
-      ADMIN_USERNAME      = var.admin_username
-      ADMIN_PASSWORD_HASH = var.admin_password_hash
+      SECRET_KEY          = data.aws_ssm_parameter.secret_key_live.value
+      ADMIN_USERNAME      = data.aws_ssm_parameter.admin_username_live.value
+      ADMIN_PASSWORD_HASH = data.aws_ssm_parameter.admin_password_hash_live.value
       DYNAMODB_TABLE_NAME = aws_dynamodb_table.posts.name
     }
   }

@@ -41,9 +41,8 @@ variable "admin_username" {
 }
 
 variable "admin_password_hash" {
-  description = "Optional Werkzeug password hash for admin login."
+  description = "Werkzeug password hash for admin login."
   type        = string
-  default     = ""
   sensitive   = true
 }
 
