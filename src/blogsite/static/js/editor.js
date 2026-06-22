@@ -25,6 +25,11 @@
       // marked is available after CDN load
       if (window.marked) {
         preview.innerHTML = window.marked.parse(textarea.value);
+        if (window.hljs) {
+          preview.querySelectorAll("pre code").forEach(function (block) {
+            window.hljs.highlightElement(block);
+          });
+        }
       }
     }
 
