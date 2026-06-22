@@ -18,21 +18,18 @@ from flask import (
 from boto3.dynamodb.conditions import Attr, Key
 from slugify import slugify
 from botocore.exceptions import ClientError
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 
 # ---------------------------------------------------------------------------
 # App configuration
 # ---------------------------------------------------------------------------
 
 app = Flask(__name__, instance_relative_config=True)
-app.secret_key = os.environ.get("SECRET_KEY")
+app.secret_key = os.environ["SECRET_KEY"]
 app.permanent_session_lifetime = timedelta(hours=8)
 
-# Admin credentials — set via environment variables in production.
-# Default dev credentials: username=admin  password=admin
-ADMIN_USERNAME: str = os.environ.get("ADMIN_USERNAME", "admin")
-_raw_hash = os.environ.get("ADMIN_PASSWORD_HASH")
-ADMIN_PASSWORD_HASH: str = _raw_hash if _raw_hash else generate_password_hash("admin")
+ADMIN_USERNAME = os.environ["ADMIN_USERNAME"]
+ADMIN_PASSWORD_HASH = os.environ["ADMIN_PASSWORD_HASH"]
 
 # DynamoDB configuration
 DYNAMODB_TABLE_NAME = os.environ.get("DYNAMODB_TABLE_NAME", "blog_posts")
