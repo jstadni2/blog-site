@@ -62,3 +62,7 @@ e2e-test:
 
 deploy:
 	TF_VAR_name_prefix=$$(whoami) terraform -chdir=terraform apply -var-file=sandbox.tfvars
+
+# Force a redeployment of the source code
+deploy-src:
+	TF_VAR_name_prefix=$(whoami) terraform -chdir=terraform apply -var-file=sandbox.tfvars -replace=null_resource.docker_build_push
