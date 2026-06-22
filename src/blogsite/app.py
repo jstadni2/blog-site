@@ -36,11 +36,6 @@ DYNAMODB_TABLE_NAME = os.environ.get("DYNAMODB_TABLE_NAME", "blog_posts")
 DYNAMODB_ENDPOINT_URL = os.environ.get("DYNAMODB_ENDPOINT_URL")
 DYNAMODB_REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-2")
 
-# Helpful defaults for local DynamoDB usage only.
-if DYNAMODB_ENDPOINT_URL:
-    os.environ.setdefault("AWS_ACCESS_KEY_ID", "local")
-    os.environ.setdefault("AWS_SECRET_ACCESS_KEY", "local")
-
 # ---------------------------------------------------------------------------
 # DynamoDB repository
 # ---------------------------------------------------------------------------
