@@ -189,7 +189,7 @@ class PostRepository:
     def delete_post(self, post_id: str) -> None:
         self._table.delete_item(Key={"id": post_id})
 
-
+# TODO: Lazy loading
 repo = PostRepository()
 
 
